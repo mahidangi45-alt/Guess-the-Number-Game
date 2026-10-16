@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guess the Number Game</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .game {
+      background: white;
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      border-radius: 22px;
+      text-align: center;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      color: #5541a5;
+      margin-top: 0;
+    }
+
+    p {
+      color: #555;
+      line-height: 1.6;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 15px 0;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #7656d6;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      margin: 5px;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .guess-btn {
+      background: #6c5ce7;
+      color: white;
+      width: 100%;
+    }
+
+    .reset-btn {
+      background: #e9e5ff;
+      color: #5541a5;
+    }
+
+    #message {
+      min-height: 28px;
+      font-weight: bold;
+      margin: 18px 0 8px;
+    }
+
+    .attempts {
+      background: #f3f0ff;
+      padding: 12px;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 400px) {
+      .game {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="game">
+    <h1>🎯 Guess the Number</h1>
+
+    <p>
+      I have selected a number between 1 and 100.
+      Can you guess it?
+    </p>
+
+    <form id="guessForm">
+      <input
+        type="number"
+        id="guessInput"
+        min="1"
+        max="100"
+        step="1"
+        placeholder="Enter a number (1–100)"
+        aria-label="Enter your guess"
+        required
+      >
+
+      <button type="submit" class="guess-btn">
+        Check My Guess
+      </button>
+    </form>
+
+    <p id="message" role="status" aria-live="polite">
+      Good luck! 😊
+    </p>
+
+    <div class="attempts">
+      Attempts: <strong id="attempts">0</strong>
+    </div>
+
+    <button type="button" class="reset-btn" id="playAgain">
+      🔄 Play Again
+    </button>
+  </main>
+
+  <script>
+    let secretNumber;
+    let attempts = 0;
+    let gameOver = false;
+
+    const form = document.getElementById("guessForm");
+    const input = document.getElementById("guessInput");
+    const message = document.getElementById("message");
+    const attemptsDisplay = document.getElementById("attempts");
+    const playAgainButton = document.getElementById("playAgain");
+
+    function startGame() {
+      secretNumber = Math.floor(Math.random() * 100) + 1;
+      attempts = 0;
+      gameOver = false;
+
+      attemptsDisplay.textContent = attempts;
+      message.textContent = "Good luck! 😊";
+      message.style.color = "#5541a5";
+
+      input.value = "";
+      input.disabled = false;
+      input.focus();
+    }
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      if (gameOver) return;
+
+      const guess = input.value.trim();
+      const number = Number(guess);
+
+      if (
+        guess === "" ||
+        !Number.isInteger(number) ||
+        number < 1 ||
+        number > 100
+      ) {
+        message.textContent =
+          "Please enter a whole number from 1 to 100.";
+        message.style.color = "#d63031";
+        return;
+      }
+
+      attempts++;
+      attemptsDisplay.textContent = attempts;
+
+      if (number > secretNumber) {
+        message.textContent = "📉 Too High! Try a smaller number.";
+        message.style.color = "#e17055";
+      } else if (number < secretNumber) {
+        message.textContent = "📈 Too Low! Try a bigger number.";
+        message.style.color = "#0984e3";
+      } else {
+        message.textContent =
+          `🎉 Correct! You guessed it in ${attempts} attempts!`;
+        message.style.color = "#00a86b";
+        gameOver = true;
+        input.disabled = true;
+      }
+
+      if (!gameOver) {
+        input.select();
+      }
+    });
+
+    playAgainButton.addEventListener("click", startGame);
+
+    startGame();
+  </script>
+</body>
+</html>
